@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIST Tüm Hisseler</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 BIST Tüm Hisseler</h1>
+            <nav>
+                <a href="/">Ana Sayfa (Filtreler)</a>
+                <a href="/stocks.html" class="active">Tüm Hisseler</a>
+                <a href="/detail.html">Detay</a>
+            </nav>
+            <button id="refreshBtn" class="refresh-btn">🔄 Yenile</button>
+        </header>
+
+        <main>
+            <div id="loading" class="loading hidden">Yükleniyor...</div>
+            <div id="stocksGrid" class="stocks-grid"></div>
+        </main>
+    </div>
+
+    <script src="stocks.js"></script>
+</body>
+</html>

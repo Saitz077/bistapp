@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hisse Detay</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="title">📌 Hisse Detay</h1>
+            <nav>
+                <a href="/">Ana Sayfa (Filtreler)</a>
+                <a href="/stocks.html">Tüm Hisseler</a>
+                <a href="/detail.html" class="active">Detay</a>
+            </nav>
+            <button id="refreshBtn" class="refresh-btn">🔄 Yenile</button>
+            <div id="loading" class="loading hidden">Yükleniyor...</div>
+        </header>
+
+        <main>
+            <section class="filter-section">
+                <h2>📈 Fiyat Grafiği (Kapanış)</h2>
+                <div style="height: 340px;">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </section>
+
+            <section class="filter-section">
+                <h2>🕯️ Mum Yüzdeleri (Günlük % Değişim)</h2>
+                <div id="candlesTable"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="detail.js"></script>
+</body>
+</html>
+

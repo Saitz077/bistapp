@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIST Hisse Filtreleri</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📈 BIST Hisse Analiz Filtreleri</h1>
+            <p class="subtitle">Hisse senetleri çeşitli kriterlere göre filtrelenmiş listeler</p>
+            <nav>
+                <a href="/" class="active">Ana Sayfa (Filtreler)</a>
+                <a href="/stocks.html">Tüm Hisseler</a>
+                <a href="/detail.html">Detay</a>
+            </nav>
+            <button id="refreshBtn" class="refresh-btn">🔄 Verileri Yenile</button>
+            <div id="loading" class="loading hidden">Yükleniyor...</div>
+        </header>
+
+        <main>
+            <!-- Filtre 1: Son 5 günde en az 4 günü ekside kapanan -->
+            <section class="filter-section">
+                <h2>📉 Son 5 Günde En Az 4 Günü Ekside Kapanan Hisseler</h2>
+                <div id="filter1" class="stock-list"></div>
+            </section>
+
+            <!-- Filtre 2: Son 3 günde 3 gün üst üste artıda kapanan -->
+            <section class="filter-section">
+                <h2>🚀 Son 3 Günde 3 Gün Üst Üste Artıda Kapanan (Momentum)</h2>
+                <div id="filter2" class="stock-list"></div>
+            </section>
+
+            <!-- Filtre 3: Son 2 günde %8+ yükselen -->
+            <section class="filter-section">
+                <h2>📊 Son 2 Günde %8+ Yükselen Hisseler</h2>
+                <div id="filter3" class="stock-list"></div>
+            </section>
+
+            <!-- Filtre 4: Son 2 günde %8+ düşen -->
+            <section class="filter-section">
+                <h2>📉 Son 2 Günde %8+ Düşen Hisseler</h2>
+                <div id="filter4" class="stock-list"></div>
+            </section>
+
+            <!-- Filtre 5: Son 3 günde 3 gün üst üste ekside kapanan -->
+            <section class="filter-section">
+                <h2>⬇️ Son 3 Günde 3 Gün Üst Üste Ekside Kapanan Hisseler</h2>
+                <div id="filter5" class="stock-list"></div>
+            </section>
+
+            <!-- Filtre 6: Son 4 günde 4 gün üst üste artıda kapanan -->
+            <section class="filter-section">
+                <h2>🌟 Son 4 Günde 4 Gün Üst Üste Artıda Kapanan Hisseler</h2>
+                <div id="filter6" class="stock-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36301.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BISTApp", "BISTApp\BISTApp.csproj", "{5A739023-4F95-4600-87E2-A76A1558ED63}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A739023-4F95-4600-87E2-A76A1558ED63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A739023-4F95-4600-87E2-A76A1558ED63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A739023-4F95-4600-87E2-A76A1558ED63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A739023-4F95-4600-87E2-A76A1558ED63}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB4A88B4-7B23-461C-BE65-371ECC774E35}
+	EndGlobalSection
+EndGlobal
