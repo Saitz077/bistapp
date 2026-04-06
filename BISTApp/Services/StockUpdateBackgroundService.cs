@@ -59,8 +59,8 @@ public class StockUpdateBackgroundService : BackgroundService
             _lastSymbolRefreshUtc = DateTime.UtcNow;
         }
 
-        // Fiyat + history daha sık
-        await dataService.UpdatePricesAndHistoryAsync(days: 60, ct: ct);
+        // Fiyat + history daha sık; sadece son 20 günü tutacağız
+        await dataService.UpdatePricesAndHistoryAsync(days: 20, ct: ct);
     }
 
     public override async Task StopAsync(CancellationToken cancellationToken)

@@ -144,11 +144,27 @@ public class BistDataService
             // Döngü bitince son kalanları kaydet
             await _context.SaveChangesAsync(ct);
 
+            // 20 günden eski history verisini temizle
+            await DeleteHistoryOlderThanAsync(20, ct);
+
             _logger.LogInformation("Prices/history update completed.");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating prices/history");
+        }
+    }
+
+    public async Task DeleteHistoryOlderThanAsync(int days = 20, CancellationToken ct = default)
+    {
+        var cutoff = DateTime.UtcNow.Date.AddDays(-days);
+        var deletedCount = await _context.StockHistories
+            .Where(h => h.Date < cutoff)
+            .ExecuteDeleteAsync(ct);
+
+        if (deletedCount > 0)
+        {
+            _logger.LogInformation("Deleted {Count} stock history records older than {Days} days", deletedCount, days);
         }
     }
 
