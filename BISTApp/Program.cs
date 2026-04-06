@@ -30,54 +30,20 @@ builder.Services.AddSwaggerGen(c =>
 var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? builder.Configuration["DefaultConnection"];
 
-var usePostgres = false;
-if (!string.IsNullOrWhiteSpace(defaultConnection))
+if (string.IsNullOrWhiteSpace(defaultConnection))
 {
-    var isPostgresUri = defaultConnection.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase)
-        || defaultConnection.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase);
-
-    var hasSqliteKeyword = defaultConnection.Contains("Data Source=", StringComparison.OrdinalIgnoreCase)
-        || defaultConnection.Contains("Filename=", StringComparison.OrdinalIgnoreCase);
-
-    if (isPostgresUri)
-    {
-        var builderString = new NpgsqlConnectionStringBuilder(defaultConnection)
-        {
-            SslMode = SslMode.Require
-        };
-        defaultConnection = builderString.ConnectionString;
-        usePostgres = true;
-    }
-    else if (!hasSqliteKeyword &&
-             (defaultConnection.Contains("Host=", StringComparison.OrdinalIgnoreCase)
-              || defaultConnection.Contains("Username=", StringComparison.OrdinalIgnoreCase)
-              || defaultConnection.Contains("Password=", StringComparison.OrdinalIgnoreCase)
-              || defaultConnection.Contains("Database=", StringComparison.OrdinalIgnoreCase)))
-    {
-        var builderString = new NpgsqlConnectionStringBuilder(defaultConnection)
-        {
-            SslMode = SslMode.Require
-        };
-        defaultConnection = builderString.ConnectionString;
-        usePostgres = true;
-    }
+    throw new InvalidOperationException("ConnectionStrings:DefaultConnection is required and must contain a PostgreSQL connection string.");
 }
 
-if (usePostgres)
+var builderString = new NpgsqlConnectionStringBuilder(defaultConnection)
 {
-    builder.Services.AddDbContext<BistDbContext>(options =>
-        options.UseNpgsql(defaultConnection!));
-}
-else if (!string.IsNullOrWhiteSpace(defaultConnection))
-{
-    builder.Services.AddDbContext<BistDbContext>(options =>
-        options.UseSqlite(defaultConnection));
-}
-else
-{
-    builder.Services.AddDbContext<BistDbContext>(options =>
-        options.UseSqlite("Data Source=bist.db"));
-}
+    SslMode = SslMode.Require
+};
+
+var postgresConnection = builderString.ConnectionString;
+
+builder.Services.AddDbContext<BistDbContext>(options =>
+    options.UseNpgsql(postgresConnection));
 
 // HttpClients
 builder.Services.AddScoped<FileSymbolService>();
