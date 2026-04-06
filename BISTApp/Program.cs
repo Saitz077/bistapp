@@ -23,17 +23,26 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "BIST API", Version = "v1" });
 });
 
-var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection");
+var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["DefaultConnection"];
+
 if (!string.IsNullOrWhiteSpace(defaultConnection) &&
-    (defaultConnection.Contains("Host=") || defaultConnection.Contains("Username=") || defaultConnection.Contains("Password=")))
+    (defaultConnection.Contains("Host=", StringComparison.OrdinalIgnoreCase) ||
+     defaultConnection.Contains("Username=", StringComparison.OrdinalIgnoreCase) ||
+     defaultConnection.Contains("Password=", StringComparison.OrdinalIgnoreCase)))
 {
     builder.Services.AddDbContext<BistDbContext>(options =>
         options.UseNpgsql(defaultConnection));
 }
-else
+else if (!string.IsNullOrWhiteSpace(defaultConnection))
 {
     builder.Services.AddDbContext<BistDbContext>(options =>
         options.UseSqlite(defaultConnection));
+}
+else
+{
+    builder.Services.AddDbContext<BistDbContext>(options =>
+        options.UseSqlite("Data Source=bist.db"));
 }
 
 // HttpClients
