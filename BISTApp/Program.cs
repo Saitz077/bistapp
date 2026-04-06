@@ -1,6 +1,7 @@
 using BISTApp.Data;
 using BISTApp.Services;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +27,43 @@ builder.Services.AddSwaggerGen(c =>
 var defaultConnection = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? builder.Configuration["DefaultConnection"];
 
-if (!string.IsNullOrWhiteSpace(defaultConnection) &&
-    (defaultConnection.Contains("Host=", StringComparison.OrdinalIgnoreCase) ||
-     defaultConnection.Contains("Username=", StringComparison.OrdinalIgnoreCase) ||
-     defaultConnection.Contains("Password=", StringComparison.OrdinalIgnoreCase)))
+var usePostgres = false;
+if (!string.IsNullOrWhiteSpace(defaultConnection))
+{
+    var isPostgresUri = defaultConnection.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase)
+        || defaultConnection.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase);
+
+    var hasSqliteKeyword = defaultConnection.Contains("Data Source=", StringComparison.OrdinalIgnoreCase)
+        || defaultConnection.Contains("Filename=", StringComparison.OrdinalIgnoreCase);
+
+    if (isPostgresUri)
+    {
+        var builderString = new NpgsqlConnectionStringBuilder(defaultConnection)
+        {
+            SslMode = SslMode.Require
+        };
+        defaultConnection = builderString.ConnectionString;
+        usePostgres = true;
+    }
+    else if (!hasSqliteKeyword &&
+             (defaultConnection.Contains("Host=", StringComparison.OrdinalIgnoreCase)
+              || defaultConnection.Contains("Username=", StringComparison.OrdinalIgnoreCase)
+              || defaultConnection.Contains("Password=", StringComparison.OrdinalIgnoreCase)
+              || defaultConnection.Contains("Database=", StringComparison.OrdinalIgnoreCase)))
+    {
+        var builderString = new NpgsqlConnectionStringBuilder(defaultConnection)
+        {
+            SslMode = SslMode.Require
+        };
+        defaultConnection = builderString.ConnectionString;
+        usePostgres = true;
+    }
+}
+
+if (usePostgres)
 {
     builder.Services.AddDbContext<BistDbContext>(options =>
-        options.UseNpgsql(defaultConnection));
+        options.UseNpgsql(defaultConnection!));
 }
 else if (!string.IsNullOrWhiteSpace(defaultConnection))
 {
