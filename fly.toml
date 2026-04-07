@@ -1,0 +1,25 @@
+app = "bistapp"
+primary_region = "fra"
+
+[build]
+  dockerfile = "BISTApp/Dockerfile"
+  workspace = "BISTApp"
+
+[env]
+  ConnectionStrings__DefaultConnection = "Data Source=/data/bist.db"
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+[[mounts]]
+  source = "bistdata"
+  destination = "/data"
