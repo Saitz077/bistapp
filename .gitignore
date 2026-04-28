@@ -21,3 +21,8 @@ obj/
 # OS
 .DS_Store
 Thumbs.db
+
+# Installers
+*.msi
+*.exe
+*.cab

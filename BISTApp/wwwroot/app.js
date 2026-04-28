@@ -11,7 +11,10 @@ const filterContainers = {
     filter3: document.getElementById('filter3'),
     filter4: document.getElementById('filter4'),
     filter5: document.getElementById('filter5'),
-    filter6: document.getElementById('filter6')
+    filter6: document.getElementById('filter6'),
+    filter7: document.getElementById('filter7'),
+    filter8: document.getElementById('filter8'),
+    filter9: document.getElementById('filter9')
 };
 
 // Global Data Storage
@@ -33,10 +36,13 @@ async function loadData() {
     showLoading(true);
     
     try {
-        // Paralel olarak stocks ve history verilerini çek
-        const [stocksResponse, historyResponse] = await Promise.all([
+        // Paralel olarak stocks, history ve yeni filtreleri çek
+        const [stocksResponse, historyResponse, filter7Response, filter8Response, filter9Response] = await Promise.all([
             fetch(`${API_BASE_URL}/api/bist/stocks`),
-            fetch(`${API_BASE_URL}/api/bist/history/all?days=10`)
+            fetch(`${API_BASE_URL}/api/bist/history/all?days=10`),
+            fetch(`${API_BASE_URL}/api/bist/filter/up-4-of-5`),
+            fetch(`${API_BASE_URL}/api/bist/filter/up-percent?percent=15`),
+            fetch(`${API_BASE_URL}/api/bist/filter/down-percent?percent=-15`)
         ]);
 
         if (!stocksResponse.ok || !historyResponse.ok) {
@@ -45,9 +51,18 @@ async function loadData() {
 
         stocksData = await stocksResponse.json();
         historyData = await historyResponse.json();
+        
+        const filter7Stocks = filter7Response.ok ? await filter7Response.json() : [];
+        const filter8Stocks = filter8Response.ok ? await filter8Response.json() : [];
+        const filter9Stocks = filter9Response.ok ? await filter9Response.json() : [];
 
         // Her filtreyi uygula ve göster
         applyFilters();
+        
+        // Yeni 3 filtreyi göster
+        displayStocks(filterContainers.filter7, filter7Stocks);
+        displayStocks(filterContainers.filter8, filter8Stocks);
+        displayStocks(filterContainers.filter9, filter9Stocks);
     } catch (error) {
         console.error('Veri yükleme hatası:', error);
         showError('Veriler yüklenirken bir hata oluştu. Lütfen tekrar deneyin.');

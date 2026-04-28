@@ -139,4 +139,61 @@ public class BistController : ControllerBase
             return StatusCode(500, "Veri güncellemesi sırasında hata oluştu");
         }
     }
+
+    /// <summary>
+    /// Son 5 günde 4 gün artıda kapatanları getirir
+    /// </summary>
+    [HttpGet("filter/up-4-of-5")]
+    [ProducesResponseType(typeof(List<Stock>), 200)]
+    public async Task<ActionResult<List<Stock>>> GetStocksUpFor4Of5Days()
+    {
+        try
+        {
+            var stocks = await _dataService.GetStocksUpFor4Of5DaysAsync();
+            return Ok(stocks);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting stocks up 4 of 5 days");
+            return StatusCode(500, "Bir hata oluştu");
+        }
+    }
+
+    /// <summary>
+    /// Son 3 günde %15 ve üzeri yükselen hisseleri getirir
+    /// </summary>
+    [HttpGet("filter/up-percent")]
+    [ProducesResponseType(typeof(List<Stock>), 200)]
+    public async Task<ActionResult<List<Stock>>> GetStocksUpPercent([FromQuery] decimal percent = 15)
+    {
+        try
+        {
+            var stocks = await _dataService.GetStocksUpPercentAsync(percent);
+            return Ok(stocks);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting stocks up by percent");
+            return StatusCode(500, "Bir hata oluştu");
+        }
+    }
+
+    /// <summary>
+    /// Son 3 günde %15 ve üzeri düşen hisseleri getirir
+    /// </summary>
+    [HttpGet("filter/down-percent")]
+    [ProducesResponseType(typeof(List<Stock>), 200)]
+    public async Task<ActionResult<List<Stock>>> GetStocksDownPercent([FromQuery] decimal percent = -15)
+    {
+        try
+        {
+            var stocks = await _dataService.GetStocksDownPercentAsync(percent);
+            return Ok(stocks);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting stocks down by percent");
+            return StatusCode(500, "Bir hata oluştu");
+        }
+    }
 }

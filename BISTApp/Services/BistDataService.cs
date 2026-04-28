@@ -192,4 +192,113 @@ public class BistDataService
             .GroupBy(h => h.Symbol)
             .ToDictionary(g => g.Key, g => g.ToList());
     }
+
+    /// <summary>
+    /// Son 5 günde 4 gün artıda kapatanları getirir
+    /// </summary>
+    public async Task<List<Stock>> GetStocksUpFor4Of5DaysAsync()
+    {
+        var startDate = DateTime.UtcNow.Date.AddDays(-5);
+        
+        var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
+        var result = new List<Stock>();
+
+        foreach (var symbol in allStocks)
+        {
+            var history = await _context.StockHistories
+                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .OrderBy(h => h.Date)
+                .ToListAsync();
+
+            if (history.Count < 2)
+                continue;
+
+            // Ardışık günleri karşılaştırarak açılış/kapanış kontrolü yap
+            int upDays = 0;
+            for (int i = 1; i < history.Count; i++)
+            {
+                if (history[i].Price > history[i - 1].Price)
+                    upDays++;
+            }
+
+            if (upDays >= 4)
+            {
+                var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+                if (stock != null)
+                    result.Add(stock);
+            }
+        }
+
+        return result.OrderBy(s => s.Symbol).ToList();
+    }
+
+    /// <summary>
+    /// Son 3 günde %15 ve üzeri yükselen hisseleri getirir
+    /// </summary>
+    public async Task<List<Stock>> GetStocksUpPercentAsync(decimal percentChange = 15)
+    {
+        var startDate = DateTime.UtcNow.Date.AddDays(-3);
+        
+        var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
+        var result = new List<Stock>();
+
+        foreach (var symbol in allStocks)
+        {
+            var history = await _context.StockHistories
+                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .OrderBy(h => h.Date)
+                .ToListAsync();
+
+            if (history.Count < 2)
+                continue;
+
+            var oldest = history.First().Price;
+            var newest = history.Last().Price;
+            var change = oldest == 0 ? 0 : ((newest - oldest) / oldest) * 100m;
+
+            if (change >= percentChange)
+            {
+                var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+                if (stock != null)
+                    result.Add(stock);
+            }
+        }
+
+        return result.OrderBy(s => s.Symbol).ToList();
+    }
+
+    /// <summary>
+    /// Son 3 günde %15 ve üzeri düşen hisseleri getirir
+    /// </summary>
+    public async Task<List<Stock>> GetStocksDownPercentAsync(decimal percentChange = -15)
+    {
+        var startDate = DateTime.UtcNow.Date.AddDays(-3);
+        
+        var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
+        var result = new List<Stock>();
+
+        foreach (var symbol in allStocks)
+        {
+            var history = await _context.StockHistories
+                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .OrderBy(h => h.Date)
+                .ToListAsync();
+
+            if (history.Count < 2)
+                continue;
+
+            var oldest = history.First().Price;
+            var newest = history.Last().Price;
+            var change = oldest == 0 ? 0 : ((newest - oldest) / oldest) * 100m;
+
+            if (change <= percentChange)
+            {
+                var stock = await _context.Stocks.FirstOrDefaultAsync(s => s.Symbol == symbol);
+                if (stock != null)
+                    result.Add(stock);
+            }
+        }
+
+        return result.OrderBy(s => s.Symbol).ToList();
+    }
 }
