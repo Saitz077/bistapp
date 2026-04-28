@@ -198,22 +198,23 @@ public class BistDataService
     /// </summary>
     public async Task<List<Stock>> GetStocksUpFor4Of5DaysAsync()
     {
-        var startDate = DateTime.UtcNow.Date.AddDays(-5);
-        
         var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
         var result = new List<Stock>();
 
         foreach (var symbol in allStocks)
         {
+            // Son 5 borsa günü al (veritabanında olan son 5 tarih)
             var history = await _context.StockHistories
-                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .Where(h => h.Symbol == symbol)
+                .OrderByDescending(h => h.Date)
+                .Take(5)
                 .OrderBy(h => h.Date)
                 .ToListAsync();
 
-            if (history.Count < 2)
+            if (history.Count < 5)
                 continue;
 
-            // Ardışık günleri karşılaştırarak açılış/kapanış kontrolü yap
+            // Son 5 günün ardışık fiyat karşılaştırması
             int upDays = 0;
             for (int i = 1; i < history.Count; i++)
             {
@@ -237,15 +238,16 @@ public class BistDataService
     /// </summary>
     public async Task<List<Stock>> GetStocksUpPercentAsync(decimal percentChange = 15)
     {
-        var startDate = DateTime.UtcNow.Date.AddDays(-3);
-        
         var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
         var result = new List<Stock>();
 
         foreach (var symbol in allStocks)
         {
+            // Son 3 borsa günü al
             var history = await _context.StockHistories
-                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .Where(h => h.Symbol == symbol)
+                .OrderByDescending(h => h.Date)
+                .Take(3)
                 .OrderBy(h => h.Date)
                 .ToListAsync();
 
@@ -272,15 +274,16 @@ public class BistDataService
     /// </summary>
     public async Task<List<Stock>> GetStocksDownPercentAsync(decimal percentChange = -15)
     {
-        var startDate = DateTime.UtcNow.Date.AddDays(-3);
-        
         var allStocks = await _context.Stocks.Select(s => s.Symbol).ToListAsync();
         var result = new List<Stock>();
 
         foreach (var symbol in allStocks)
         {
+            // Son 3 borsa günü al
             var history = await _context.StockHistories
-                .Where(h => h.Symbol == symbol && h.Date >= startDate)
+                .Where(h => h.Symbol == symbol)
+                .OrderByDescending(h => h.Date)
+                .Take(3)
                 .OrderBy(h => h.Date)
                 .ToListAsync();
 
